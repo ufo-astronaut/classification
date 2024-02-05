@@ -15,7 +15,6 @@ def fileList(path_before : str)->list :
     print(result)
     return result #결과 리턴
 
-
 #죄 분류 리스트를 받아와서 정해진 위치에 폴더 생성
 def makeFolder(path_after : str, file_list : list):    
     #폴더가 이미 생성되어있다면 오류가 발생하므로 예외처리 진행
@@ -34,23 +33,20 @@ def moveFile(path_before, path_after):
     #파일명에 대한 폴더명을 딕셔너리로 저장
     for file in filelist:
         temp_list = file.split("_")
-        dict[file]=temp_list[4]
+        dict[file]=temp_list[1]
      
     print(dict)
     
     #딕셔너리 정보 활용하여 파일 이동
     for key, value in dict.items():
         shutil.move(path_before+"/"+key, path_after+"/"+value)
-    
-    
-
 
 if __name__ == "__main__" :
     #분류할 파일이 있는 위치 폴더
-    path_before = r"C:\Users\Desktop\VS CODE\Project\foldermove\분류필요한 파일"
+    path_before = r"E:\Desktop\인턴십_유에프오에스트로넛\분류미완"
     file_list = fileList(path_before)
 
     #옮길 경로 폴더
-    path_after = r"C:\Users\Desktop\VS CODE\Project\foldermove\결과"
+    path_after = r"E:\Desktop\인턴십_유에프오에스트로넛\분류완"
     makeFolder(path_after, file_list)
     moveFile(path_before, path_after)
