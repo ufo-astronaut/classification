@@ -2,6 +2,7 @@
 import os #파일명, 폴더명 정보를 읽어오기 위한 모듈
 import shutil #파일 이동을 위한 모듈
 import tkinter
+from tkinter import filedialog
 
 #파일명을 읽어와서 파일명의 분류 부분을 중복없이 리스트화
 def fileList(path_before : str)->list :
@@ -58,13 +59,41 @@ if __name__ == "__main__" :
 
 
 
+######## tkinter 로 불러오기 창 생성 
+
 window=tkinter.Tk() #기본적인 윈도우 창 생성 
 window.title("이미지 분류 파일")
 window.geometry("640x400+100+100")
 window.resizable(False, False)
 
-label=tkinter.Label(window, text="분류를 실행하려면 돈을 1000만원주세요.")
+count = 0
+
+def countUP():
+    global count
+    count +=1
+    label.config(text = str(count))
+
+label = tkinter.Label(window, text="분류를 실행하려면 돈을 1000만원주세요.")
 label.pack()
+
+button = tkinter.Button(window, text = "불러오기" ,overrelief="solid", width = 15, command=countUP, repeatdelay=1000, repeatinterval=100)
+button.pack()
+
+
+def ask():
+    window.dirName = filedialog.askdirectory()
+    root.file = filedialog.askopenfile(
+        initialdir='path', 
+        title='select file', 
+        filetypes=(('jpeg files', '*.jgp'), 
+                   ('all files', '*.*')))
+    txt.configure(text="폴더 불러오기" + window.dirName)
+
+
+    #print(window.dirName)
+    
+
+button = Button(root, text = "분류하기 ", command = ask)
 
 
 window.mainloop()
