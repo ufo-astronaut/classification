@@ -1,6 +1,7 @@
 #folder_move
 import os #파일명, 폴더명 정보를 읽어오기 위한 모듈
 import shutil #파일 이동을 위한 모듈
+import tkinter
 
 #파일명을 읽어와서 파일명의 분류 부분을 중복없이 리스트화
 def fileList(path_before : str)->list :
@@ -54,3 +55,16 @@ if __name__ == "__main__" :
     path_after = r"C:\Users\Desktop\VS CODE\Project\foldermove\결과"
     makeFolder(path_after, file_list)
     moveFile(path_before, path_after)
+
+
+
+window=tkinter.Tk() #기본적인 윈도우 창 생성 
+window.title("이미지 분류 파일")
+window.geometry("640x400+100+100")
+window.resizable(False, False)
+
+label=tkinter.Label(window, text="분류를 실행하려면 돈을 1000만원주세요.")
+label.pack()
+
+
+window.mainloop()
