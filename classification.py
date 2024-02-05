@@ -34,7 +34,7 @@ def moveFile(path_before, path_after):
     #파일명에 대한 폴더명을 딕셔너리로 저장
     for file in filelist:
         temp_list = file.split("_")
-        dict[file]=temp_list[1]
+        dict[file]=temp_list[4]
      
     print(dict)
     
