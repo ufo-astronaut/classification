@@ -1,102 +1,68 @@
-#folder_move
-import os #파일명, 폴더명 정보를 읽어오기 위한 모듈
-import shutil #파일 이동을 위한 모듈
+import os
+import shutil
 import tkinter
-from tkinter import filedialog
+from tkinter import filedialog, Label, Button, PhotoImage
 
+# 파일과 폴더 처리 기능
+def fileList(path_before: str) -> list:
+    file_list = os.listdir(path_before)
+    category = [file.split("_")[1] for file in file_list if "_" in file]
+    return list(set(category))
 
-'''
-#파일명을 읽어와서 파일명의 분류 부분을 중복없이 리스트화
-def fileList(path_before : str)->list :
-    file_list = os.listdir(path_before) #폴더의 파일명을 리스트화
-    category = [] #분류 데이터 저장을 위해 빈 리스트 생성
-    for file in file_list:
-        temp_list = file.split("_") #파일명중 "_"로 분리하여 리스트화
-        category.append(temp_list[1]) #리스트의 1 인덱싱 데이터를 category에 추가
-
-    temp_set = set(category) #중복을 제거하기 위해 set 사용
-    result = list(temp_set) #중복 제거 후 다시 리스트화
-    print(result)
-    return result #결과 리턴
-
-#죄 분류 리스트를 받아와서 정해진 위치에 폴더 생성
-def makeFolder(path_after : str, file_list : list):    
-    #폴더가 이미 생성되어있다면 오류가 발생하므로 예외처리 진행
+def makeFolder(path_after: str, file_list: list):
     for file in file_list:
         try:
-            os.makedirs(path_after+"/"+file)
-        except:
+            os.makedirs(os.path.join(path_after, file))
+        except FileExistsError:
             pass
 
-#파일을 폴더 분류에 맞게 이동
-def moveFile(path_before, path_after):
-    folderlist = os.listdir(path_after)
-    filelist = os.listdir(path_before)
-    dict = {}
+def moveFile(path_before, path_after, file_list):
+    for file in file_list:
+        category = file.split("_")[1] if "_" in file else "기타"
+        shutil.move(os.path.join(path_before, file), os.path.join(path_after, category))
 
-    #파일명에 대한 폴더명을 딕셔너리로 저장
-    for file in filelist:
-        temp_list = file.split("_")
-        dict[file]=temp_list[1]
-     
-    print(dict)
-    
-    #딕셔너리 정보 활용하여 파일 이동
-    for key, value in dict.items():
-        shutil.move(path_before+"/"+key, path_after+"/"+value)
+# tkinter GUI
+def select_source_folder():
+    dirName = filedialog.askdirectory()
+    if dirName:
+        source_folder_var.set(dirName)
 
-if __name__ == "__main__" :
-    #분류할 파일이 있는 위치 폴더
-    path_before = r"E:\Desktop\인턴십_유에프오에스트로넛\분류미완"
-    file_list = fileList(path_before)
+def select_target_folder():
+    dirName = filedialog.askdirectory()
+    if dirName:
+        target_folder_var.set(dirName)
 
-    #옮길 경로 폴더
-    path_after = r"E:\Desktop\인턴십_유에프오에스트로넛\분류완"
-    makeFolder(path_after, file_list)
-    moveFile(path_before, path_after)
+def classify_files():
+    path_before = source_folder_var.get()
+    path_after = target_folder_var.get()
+    if path_before and path_after:
+        file_list = fileList(path_before)
+        makeFolder(path_after, file_list)
+        moveFile(path_before, path_after, os.listdir(path_before))
+        tkinter.messagebox.showinfo("완료", "파일 분류가 완료되었습니다.")
 
-'''
-
-######## tkinter 로 불러오기 창 생성 
-
-window=tkinter.Tk() #기본적인 윈도우 창 생성 
-window.title("이미지 분류 파일")
+window = tkinter.Tk()
+window.title("이미지 분류 프로그램")
 window.geometry("640x400+100+100")
 window.resizable(False, False)
 
-count = 0
+source_folder_var = tkinter.StringVar()
+target_folder_var = tkinter.StringVar()
 
-def countUP():
-    global count
-    count +=1
-    label.config(text = str(count))
+tkinter.Label(window, text="원본 폴더:").pack()
+tkinter.Entry(window, textvariable=source_folder_var, width=50).pack()
+tkinter.Button(window, text="원본 폴더 선택", command=select_source_folder).pack()
 
-label = tkinter.Label(window, text="분류를 실행하려면 돈을 1000만원주세요.")
-label.pack()
+tkinter.Label(window, text="대상 폴더:").pack()
+tkinter.Entry(window, textvariable=target_folder_var, width=50).pack()
+tkinter.Button(window, text="대상 폴더 선택", command=select_target_folder).pack()
 
-button = tkinter.Button(window, text = "불러오기" ,overrelief="solid", width = 15, command=countUP, repeatdelay=1000, repeatinterval=100)
-button1 = tkinter.Button(window, text = "분류하기" ,overrelief="solid", width = 15, command=countUP, repeatdelay=1000, repeatinterval=100)
-
-
-button.pack(side = "right")
-button1.pack(side = "right")
+tkinter.Button(window, text="분류 시작", command=classify_files).pack()
 
 
-
-def ask():
-    window.dirName = filedialog.askdirectory()
-    root.file = filedialog.askopenfile(
-        initialdir='path', 
-        title='select file', 
-        filetypes=(('jpeg files', '*.jgp'), 
-                   ('all files', '*.*')))
-    txt.configure(text="폴더 불러오기" + window.dirName)
-
-
-    #print(window.dirName)
-    
-
-button = Button(window, text = "불러오기 ", command = ask)
-button1 = Button (window, text = "분류하기", command = moveFile)
+gif_label = Label(window)
+gif_label.pack()
+photo = PhotoImage(file="/Users/dhl/Desktop/ufo-ezgif.com-video-to-gif-converter.gif")
+gif_label.config(image=photo)
 
 window.mainloop()
