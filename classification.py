@@ -77,7 +77,12 @@ label = tkinter.Label(window, text="분류를 실행하려면 돈을 1000만원�
 label.pack()
 
 button = tkinter.Button(window, text = "불러오기" ,overrelief="solid", width = 15, command=countUP, repeatdelay=1000, repeatinterval=100)
-button.pack()
+button1 = tkinter.Button(window, text = "분류하기" ,overrelief="solid", width = 15, command=countUP, repeatdelay=1000, repeatinterval=100)
+
+
+button.pack(side = "right")
+button1.pack(side = "right")
+
 
 
 def ask():
@@ -93,7 +98,7 @@ def ask():
     #print(window.dirName)
     
 
-button = Button(root, text = "분류하기 ", command = ask)
-
+button = Button(window, text = "불러오기 ", command = ask)
+button1 = Button (window, text = "분류하기", command = moveFile)
 
 window.mainloop()
