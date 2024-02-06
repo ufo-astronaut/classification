@@ -4,6 +4,8 @@ import shutil #파일 이동을 위한 모듈
 import tkinter
 from tkinter import filedialog
 
+
+'''
 #파일명을 읽어와서 파일명의 분류 부분을 중복없이 리스트화
 def fileList(path_before : str)->list :
     file_list = os.listdir(path_before) #폴더의 파일명을 리스트화
@@ -53,7 +55,7 @@ if __name__ == "__main__" :
     makeFolder(path_after, file_list)
     moveFile(path_before, path_after)
 
-
+'''
 
 ######## tkinter 로 불러오기 창 생성 
 
