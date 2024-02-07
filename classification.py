@@ -6,7 +6,6 @@ from PIL import Image, ImageTk, ImageSequence
 from tkinter import ttk
 
 
-# 파일과 폴더 처리 기능
 def fileList(path_before: str) -> list:
     file_list = os.listdir(path_before)
     categories = set()  # 중복을 방지하기 위해 set을 사용합니다.
@@ -119,6 +118,10 @@ if __name__ == "__main__":
             resized_frame = frame.resize((width, height), Image.LANCZOS)  # Image.LANCZOS 사용
             frames.append(ImageTk.PhotoImage(image=resized_frame))
         return frames
+gif_label = Label(window)
+gif_label.pack()
+# photo = PhotoImage(file="/Users/dhl/Desktop/ufo-ezgif.com-video-to-gif-converter.gif")
+# gif_label.config(image=photo)
 
     # GIF의 프레임을 순환하는 함수
     def update_frame(frames, index=0):
@@ -127,13 +130,13 @@ if __name__ == "__main__":
         index = (index + 1) % len(frames)  # 다음 프레임, 또는 처음으로
         window.after(100, update_frame, frames, index)
 
-    # 크기가 조절된 GIF 프레임 로드
-    resized_frames = load_and_resize_gif(gif_path, new_width, new_height)
+        # 크기가 조절된 GIF 프레임 로드
+        resized_frames = load_and_resize_gif(gif_path, new_width, new_height)
 
-    gif_label = tkinter.Label(window)
-    gif_label.place(x = 210, y = 170)
+        gif_label = tkinter.Label(window)
+        gif_label.place(x = 210, y = 170)
 
-    # 애니메이션 시작
-    update_frame(resized_frames)
+        # 애니메이션 시작
+        update_frame(resized_frames)
 
-    window.mainloop()
+        window.mainloop()
