@@ -6,6 +6,7 @@ from PIL import Image, ImageTk, ImageSequence
 from tkinter import ttk
 
 
+# 파일과 폴더 처리 기능
 def fileList(path_before: str) -> list:
     file_list = os.listdir(path_before)
     categories = set()  # 중복을 방지하기 위해 set을 사용합니다.
@@ -24,27 +25,20 @@ def makeFolder(path_after: str, file_list: list):
 
 
 def moveFile(path_before, path_after, file_list):
-    for file in file_list:
-        # 파일이름에 '_'가 있는 경우에만 처리
-        if '_' in file:
-            filename, category = file.split('_', 1)  # '_'를 기준으로 최대 한 번만 나눕니다.
-            category_folder = os.path.join(path_after, category)
-            subcategory_folder = os.path.join(category_folder, filename.split('_')[0])
-
-            # 카테고리 폴더와 서브카테고리 폴더 생성
-            if not os.path.exists(category_folder):
-                os.makedirs(category_folder)
-            if not os.path.exists(subcategory_folder):
-                os.makedirs(subcategory_folder)
+    for file_name in file_list:
+        parts = file_name.split('_')
+        
+        # 파일명에서 확장자를 제외한 부분만 사용하여 경로를 생성합니다.
+        # 마지막 부분은 파일명이므로, 폴더 경로에는 포함되지 않습니다.
+        folder_path = path_after
+        for part in parts[:-1]:  # 파일명의 마지막 부분(확장자 전까지)을 제외하고 폴더 경로 생성
+            folder_path = os.path.join(folder_path, part)
             
-            # 파일 이동
-            shutil.move(os.path.join(path_before, file), subcategory_folder)
-        else:
-            # '_'가 없는 경우에도 카테고리 폴더 생성 후 이동
-            category_folder = os.path.join(path_after, file.split('_')[0])
-            if not os.path.exists(category_folder):
-                os.makedirs(category_folder)
-            shutil.move(os.path.join(path_before, file), category_folder)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+        
+        # 완성된 경로로 파일을 이동합니다.
+        shutil.move(os.path.join(path_before, file_name), folder_path)
 
 
 # tkinter GUI
@@ -118,10 +112,6 @@ if __name__ == "__main__":
             resized_frame = frame.resize((width, height), Image.LANCZOS)  # Image.LANCZOS 사용
             frames.append(ImageTk.PhotoImage(image=resized_frame))
         return frames
-gif_label = Label(window)
-gif_label.pack()
-# photo = PhotoImage(file="/Users/dhl/Desktop/ufo-ezgif.com-video-to-gif-converter.gif")
-# gif_label.config(image=photo)
 
     # GIF의 프레임을 순환하는 함수
     def update_frame(frames, index=0):
@@ -130,13 +120,13 @@ gif_label.pack()
         index = (index + 1) % len(frames)  # 다음 프레임, 또는 처음으로
         window.after(100, update_frame, frames, index)
 
-        # 크기가 조절된 GIF 프레임 로드
-        resized_frames = load_and_resize_gif(gif_path, new_width, new_height)
+    # 크기가 조절된 GIF 프레임 로드
+    resized_frames = load_and_resize_gif(gif_path, new_width, new_height)
 
-        gif_label = tkinter.Label(window)
-        gif_label.place(x = 210, y = 170)
+    gif_label = tkinter.Label(window)
+    gif_label.place(x = 210, y = 170)
 
-        # 애니메이션 시작
-        update_frame(resized_frames)
+    # 애니메이션 시작
+    update_frame(resized_frames)
 
-        window.mainloop()
+    window.mainloop()
