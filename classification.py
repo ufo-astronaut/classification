@@ -1,7 +1,7 @@
 import os
 import shutil
 import tkinter
-from tkinter import filedialog, Label, Button, Tk, StringVar, Entry, messagebox
+from tkinter import filedialog, Label, Button, Tk, StringVar, Entry, messagebox, PhotoImage
 from PIL import Image, ImageTk, ImageSequence 
 from tkinter import ttk
 
@@ -9,8 +9,12 @@ from tkinter import ttk
 # 파일과 폴더 처리 기능
 def fileList(path_before: str) -> list:
     file_list = os.listdir(path_before)
-    category = [file.split("_")[1] for file in file_list if "_" in file]
-    return list(set(category))
+    categories = set()  # 중복을 방지하기 위해 set을 사용합니다.
+    for file in file_list:
+        if "_" in file:
+            category = file.split("_", 1)[1]  # 언더스코어를 기준으로 파일명을 두 부분으로 나누고, 두 번째 부분을 카테고리로 사용합니다.
+            categories.add(category)
+    return list(categories)
 
 def makeFolder(path_after: str, file_list: list):
     for file in file_list:
@@ -19,10 +23,30 @@ def makeFolder(path_after: str, file_list: list):
         except FileExistsError:
             pass
 
+
 def moveFile(path_before, path_after, file_list):
     for file in file_list:
-        category = file.split("_")[1] if "_" in file else "기타"
-        shutil.move(os.path.join(path_before, file), os.path.join(path_after, category))
+        # 파일이름에 '_'가 있는 경우에만 처리
+        if '_' in file:
+            filename, category = file.split('_', 1)  # '_'를 기준으로 최대 한 번만 나눕니다.
+            category_folder = os.path.join(path_after, category)
+            subcategory_folder = os.path.join(category_folder, filename.split('_')[0])
+
+            # 카테고리 폴더와 서브카테고리 폴더 생성
+            if not os.path.exists(category_folder):
+                os.makedirs(category_folder)
+            if not os.path.exists(subcategory_folder):
+                os.makedirs(subcategory_folder)
+            
+            # 파일 이동
+            shutil.move(os.path.join(path_before, file), subcategory_folder)
+        else:
+            # '_'가 없는 경우에도 카테고리 폴더 생성 후 이동
+            category_folder = os.path.join(path_after, file.split('_')[0])
+            if not os.path.exists(category_folder):
+                os.makedirs(category_folder)
+            shutil.move(os.path.join(path_before, file), category_folder)
+
 
 # tkinter GUI
 def select_source_folder():
@@ -47,23 +71,33 @@ def classify_files():
 
 if __name__ == "__main__":
     window = tkinter.Tk()
-    window.title("이미지 분류 프로그램")
+    window.title("UFO-Astronaut 드론 이미지 분류 프로그램")
     window.geometry("640x400+100+100")
     window.resizable(False, False)
 
     source_folder_var = tkinter.StringVar()
     target_folder_var = tkinter.StringVar()
 
-    tkinter.Label(window, text="원본 폴더:").pack()
-    tkinter.Entry(window, textvariable=source_folder_var, width=50).pack()
-    tkinter.Button(window, text="원본 폴더 선택", command=select_source_folder).pack()
+    lab1 = tkinter.Label(window, text="원본 폴더:", anchor='w')#.pack()
+    lab1.place(x = 30, y= 30 )
 
-    tkinter.Label(window, text="대상 폴더:").pack()
-    tkinter.Entry(window, textvariable=target_folder_var, width=50).pack()
-    tkinter.Button(window, text="대상 폴더 선택", command=select_target_folder).pack()
+    ent1= tkinter.Entry(window, textvariable=source_folder_var, width=40 )#.pack()
+    ent1.place(x = 100, y = 30)
 
-    tkinter.Button(window, text="분류 시작", command=classify_files, background = "blue").pack()
+    btn1 = tkinter.Button(window, text="원본 폴더 선택", command=select_source_folder)#.pack()
+    btn1.place(x = 500, y  = 28)
 
+    lab2 = tkinter.Label(window, text="대상 폴더:", anchor='w')#.pack()
+    lab2.place(x = 30, y = 80)
+
+    ent2 = tkinter.Entry(window, textvariable=target_folder_var, width=40)#.pack()
+    ent2.place(x = 100 , y = 80)
+
+    btn2 = tkinter.Button(window, text="대상 폴더 선택", command=select_target_folder)#.pack()
+    btn2.place(x = 500, y = 80)
+
+    btn3 = tkinter.Button(window, text="분류 시작", command=classify_files, bg = "blue", fg = "white" )#.pack()
+    btn3.place(x = 270, y = 120 )
 
 # GIF 파일 로드
     gif_path = "/Users/dhl/Desktop/ufo-ezgif.com-video-to-gif-converter.gif"
@@ -97,7 +131,7 @@ if __name__ == "__main__":
     resized_frames = load_and_resize_gif(gif_path, new_width, new_height)
 
     gif_label = tkinter.Label(window)
-    gif_label.pack()
+    gif_label.place(x = 210, y = 170)
 
     # 애니메이션 시작
     update_frame(resized_frames)
