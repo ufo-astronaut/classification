@@ -12,7 +12,7 @@ def fileList(path_before: str) -> list:
     categories = set()  # 중복을 방지하기 위해 set을 사용합니다.
     for file in file_list:
         if "_" in file:
-            category = file.split("_", 1)[1]  # 언더스코어를 기준으로 파일명을 두 부분으로 나누고, 두 번째 부분을 카테고리로 사용합니다.
+            category = file.split("_", 1)[0]  # 언더스코어를 기준으로 파일명을 두 부분으로 나누고, 두 번째 부분을 카테고리로 사용합니다.
             categories.add(category)
     return list(categories)
 
