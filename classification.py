@@ -4,6 +4,8 @@ import tkinter
 from tkinter import filedialog, Label, Button, Tk, StringVar, Entry, messagebox, PhotoImage
 from PIL import Image, ImageTk, ImageSequence 
 from tkinter import ttk
+import sys
+
 
 
 # 파일과 폴더 처리 기능
@@ -22,7 +24,6 @@ def makeFolder(path_after: str, file_list: list):
             os.makedirs(os.path.join(path_after, file))
         except FileExistsError:
             pass
-
 
 def moveFile(path_before, path_after, file_list):
     for file_name in file_list:
@@ -92,18 +93,18 @@ if __name__ == "__main__":
     btn3 = tkinter.Button(window, text="분류 시작", command=classify_files, bg = "blue", fg = "white" )#.pack()
     btn3.place(x = 270, y = 120 )
 
+    style = ttk.Style()
+
 # GIF 파일 로드
     gif_path = "/Users/dhl/Desktop/ufo-ezgif.com-video-to-gif-converter.gif"
     new_width = 200
     new_height = 200
-
     style = ttk.Style()
 
     #photo = PhotoImage(file=gif_path)
 
     #gif_label = Label(window, image=photo)
     #gif_label.pack()
-
 
     def load_and_resize_gif(path, width, height):
         frames = []
